@@ -1,93 +1,56 @@
-import { Raycaster, Mesh, BoxGeometry, MeshBasicMaterial, PerspectiveCamera, Vector2} from 'three'
-
-// import { spawn, Thread } from "threads"
-import {GPU} from 'gpu.js'
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 
+console.log(window.THREE = THREE)
+
+// 创建场景
+const scene = new THREE.Scene();
+
+// 创建相机
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10);
 
 
+camera.position.set(5,5,5)
+
+// 创建渲染器
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement)
+
+controls.rotateSpeed = 1.5
+controls.enableDamping = true
 
 
-// import MyWorker from "./work.js?worker"
+// 创建立方体的几何体
+const geometry = new THREE.BoxGeometry(2, 1, 3);
 
-// console.log(MyWorker)
+// 创建立方体的材质
+const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-// // const b = new Blob([work], {
-// //   type: 'application/javascript'
-// // })
+// 创建立方体的网格对象
+const cube = new THREE.Mesh(geometry, material);
 
+window.cube = cube
 
-
-
-// // const worker: Worker = MyWorker()
-
-
-
+// 将立方体添加到场景中
+scene.add(cube);
 
 
-// // worker.onmessage = (message) => {
-// //   console.log(message)
-// // }
-
-// // worker.onerror = (onerror) => {
-// //   console.log(onerror)
-// // }
-// const list = []
-
-// for (let i = 0; i < 100000; i++) {
-//   list.push(new Mesh(new BoxGeometry(1, 1), new MeshBasicMaterial({color: 0xff0000})))
-// }
-// const ray = new Raycaster()
+scene.add(new THREE.AxesHelper(10))
 
 
-// const camera = new PerspectiveCamera(75, 940 / 927, 0.01, 1000)
-
-// camera.lookAt(0, 0, 0)
-// camera.position.set(5,5,5)
-
-// ray.setFromCamera(new Vector2(0, 0), camera)
-
-// console.time('start')
-// // const d = ray.intersectObjects(list)
-// console.timeEnd('start')
-
-// setInterval(() => {
-//   console.log('set time')
-// }, 10);
-// // worker.postMessage([])
+scene.add(new THREE.AmbientLight(0x404040, 1));
 
 
-const gpu = new GPU();
-const multiplyMatrix = gpu.createKernel(function(a: number[][], b: number[][]) {
-  let sum = 0;
-  for (let i = 0; i < 512; i++) {
-    sum += a[this.thread.y][i] * b[i][this.thread.x];
-  }
-  return sum;
-}).setOutput([512, 512]);
+function animate() {
+  requestAnimationFrame(animate);
 
-const c = multiplyMatrix([[2, 3, 4, 5]], [[2, 1, 0, -2]]) as number[][];
+  // 旋转立方体
 
-console.log(c)
+  renderer.render(scene, camera);
+}
 
-
-
-
-// console.log("Hashed password:", hashed)
-
-
-// async function setup () {
-
-
-//   console.log('setup')
-
-//   const auth = await spawn(worker)
-
-
-//   console.log(auth)
-//   const hashed = await auth.hashPassword("Super secret password", "1234")
-//   console.log(hashed)
-//   // await Thread.terminate(auth)
-// }
-
-// setup()
+animate()
