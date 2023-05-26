@@ -10,3 +10,5 @@
 //     export const Thread, 
 //     export const  Worker
 // }
+
+declare const window: any;
